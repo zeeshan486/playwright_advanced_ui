@@ -38,12 +38,12 @@ async getUploadedFileName():Promise<string>{
 async uploadFileByDragAndDrop(filePaths: string[]): Promise<void> {
    await this.dragFileInput.setInputFiles(filePaths)
 }
-async getDraggedFileName():Promise<string[]>{
+async getDraggedFileNames():Promise<string[]>{
     const dragFileName = await this.dragFileName.allTextContents()
     return dragFileName
 }
 
-async getTitle():Promise<string>{
+async getPageHeading():Promise<string>{
     const title = await this.title.textContent();
     return title?.trimEnd()??""
 }

@@ -21,8 +21,6 @@ test("TC-05 Download File And Verify File Name", async ({ downloadPage }) => {
 test("TC-06 Download File And Verify It Is Saved", async ({ downloadPage }) => {
 
     const savedFilePath =await downloadPage.saveDownloadedFile(downloadFiles.randomData.fileName,downloadConfig.downloadFolder);
-
-    console.log(savedFilePath)
     expect(fs.existsSync(savedFilePath)).toBeTruthy();
 
 });

@@ -14,14 +14,14 @@ test("TC-01 Upload File Using File Chooser",async({uploadPage})=>{
 
 test("TC-02 Upload File Using Drag And Drop",async({uploadPage})=>{
     await uploadPage.uploadFileByDragAndDrop([uploadfiles.sampleDoc.path,uploadfiles.image.path])
-    expect(await uploadPage.getDraggedFileName()).toEqual([uploadfiles.sampleDoc.fileName,uploadfiles.image.fileName])
+    expect(await uploadPage.getDraggedFileNames()).toEqual([uploadfiles.sampleDoc.fileName,uploadfiles.image.fileName])
 
 })
 
 test("TC-03 Upload Without Selecting A File",async({uploadPage})=>{
 
         await uploadPage.clickUploadButton()
-        expect(await uploadPage.getTitle()).toBe("Internal Server Error")
+        expect(await uploadPage.getPageHeading()).toBe("Internal Server Error")
 })
 
 test("TC-04 Upload New File Replaces Existing Upload",async({uploadPage})=>{
