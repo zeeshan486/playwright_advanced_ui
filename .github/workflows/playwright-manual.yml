@@ -1,0 +1,99 @@
+name: Playwright Manual Execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select Target GitHub Environment'
+        required: true
+        default: 'qa'
+        type: choice
+        options:
+          - local
+          - qa
+          - stage
+          - production
+
+# Enforce least-privilege security permissions
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Run Playwright Tests (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    # Inject selected GitHub Environment dynamically
+    environment: ${{ inputs.environment }}
+
+    # Inject variables and secrets directly from selected GitHub Environment without creating .env files
+    env:
+      BASE_URL: ${{ vars.BASE_URL }}
+      API_URL: ${{ vars.API_URL }}
+      USERNAME: ${{ secrets.USERNAME }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      CI: 'true'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (22.x)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+
+      - name: Get Playwright Version for Cache Key
+        id: playwright-version
+        run: echo "version=$(node -e "console.log(require('./package.json').devDependencies['@playwright/test'] || '')")" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright Browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers with OS Dependencies
+        run: npx playwright install --with-deps
+
+      - name: Display Execution Environment Info
+        run: |
+          echo "=========================================="
+          echo "Executing Manual Automation Test Run"
+          echo "Selected Environment: ${{ inputs.environment }}"
+          echo "=========================================="
+
+      - name: Run Playwright Tests
+        run: npm test
+
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-html-report-manual-${{ inputs.environment }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: allure-results-manual-${{ inputs.environment }}
+          path: allure-results/
+          retention-days: 30
+
+      - name: Upload Playwright Test Results
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-test-results-manual-${{ inputs.environment }}
+          path: test-results/
+          retention-days: 30
