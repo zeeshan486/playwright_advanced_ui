@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-
+import { config } from "./src/config/environment";
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -15,7 +15,7 @@ export default defineConfig({
   testDir: './src/tests',
 
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -23,15 +23,23 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [['html'],['allure-playwright']],
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    headless:false,
+    
+    headless:true,
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'https://the-internet.herokuapp.com/',
+    // baseURL: 'https://the-internet.herokuapp.com/',
+    baseURL:config.baseURL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
+    screenshot:'on-first-failure',
+    video:'retain-on-failure',
+    viewport: {height:1920,width:1080},
+    ignoreHTTPSErrors: true
+
   },
 
   /* Configure projects for major browsers */

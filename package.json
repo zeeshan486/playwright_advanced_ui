@@ -4,14 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:ui": "playwright test --ui",
-    "report": "playwright show-report"
+    "test:local": "cross-env ENV=local playwright test",
+    "test:qa": "cross-env ENV=qa playwright test",
+    "test:stage": "cross-env ENV=stage playwright test",
+    "test:prod": "cross-env ENV=prod playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",
     "@types/node": "^26.0.1",
+    "allure-playwright": "^3.10.2",
+    "cross-env": "^10.1.0",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
   }
 }
