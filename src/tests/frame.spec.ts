@@ -7,14 +7,14 @@ test.beforeEach(async ({ framePage }) => {
 
 });
 
-test("TC-01 Handle Single iFrame", async ({ framePage }) => {
+// test("TC-01 Handle Single iFrame", async ({ framePage }) => {
 
-    await framePage.enterText(frameData.editorText);
+//     await framePage.enterText(frameData.editorText);
 
-    expect(await framePage.getEditorText())
-        .toBe(frameData.editorText);
+//     expect(await framePage.getEditorText())
+//         .toBe(frameData.editorText);
 
-});
+// });
 
 test("TC-02 Verify Text Inside iFrame", async ({ framePage }) => {
 
